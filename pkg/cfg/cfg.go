@@ -5,13 +5,17 @@ import "os"
 type Cfg struct {
 	ConnectionPgString,
 	ConnectioRedisIP,
-	ConnectioRedisPass string
+	ConnectioRedisPass,
+	ConnectionIpServer,
+	ConnectionPortServer string
 }
 
 func CfgLaunch() *Cfg {
 	return &Cfg{
-		ConnectionPgString: os.Getenv("CONNECTION_STRING"),
-		ConnectioRedisIP:   os.Getenv("CONNECTION_REDIS_IP"),
-		ConnectioRedisPass: os.Getenv("CONNECTION_REDIS_PASS"),
+		ConnectionPgString:   os.Getenv("CONNECTION_STRING"),
+		ConnectioRedisIP:     os.Getenv("CONNECTION_REDIS_IP"),
+		ConnectioRedisPass:   os.Getenv("CONNECTION_REDIS_PASS"),
+		ConnectionIpServer:   os.Getenv("CONNECTION_IP_SERVER_ADDRESS"),
+		ConnectionPortServer: os.Getenv("CONNECTION_PORT_SERVER_ADDRESS"),
 	}
 }

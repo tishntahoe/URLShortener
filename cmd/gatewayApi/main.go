@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/tishntahoe/UrlShortener/cmd/storageInit"
+	si "github.com/tishntahoe/UrlShortener/cmd/storageInit"
 	gw "github.com/tishntahoe/UrlShortener/internal/gateway"
 	cfg "github.com/tishntahoe/UrlShortener/pkg/cfg"
 	"net/http"
@@ -10,12 +10,19 @@ import (
 
 func main() {
 	cfgData := cfg.CfgLaunch()
-	err := storageInit.StorageInit(cfgData)
+	err := si.StorageInit(cfgData)
 	if err != nil {
 		//logger
 		fmt.Println(err)
 		return
 	}
+
+	err = gw.CreateConnection(cfgData.ConnectionIpServer)
+	if err != nil {
+		//logger
+		return
+	}
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", gw.CreateLinkHandler)
 	mux.HandleFunc("/{id}", gw.GetLinkHandler)
