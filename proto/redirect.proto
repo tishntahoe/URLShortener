@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package redirect;
+
+option go_package = "/proto/redirectpb";
+
+service RedirectService{
+    rpc ToRedirect(RedirectShortRequest) returns (RedirectShortResponse);
+}
+
+message RedirectShortRequest {
+    string short_link = 1;
+}
+message RedirectShortResponse {
+    string orig_link = 1;
+}

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package redirect;
+
+option go_package = "/proto/shortenerpb";
+
+service ShortenerService{
+    rpc ToShort(ShortRequest) returns (ShortResponse);
+}
+
+message ShortRequest {
+    string orig_link = 1;
+}
+message ShortResponse {
+    string short_link = 1;
+}
+

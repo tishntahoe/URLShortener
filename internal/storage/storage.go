@@ -2,22 +2,18 @@ package storage
 
 import (
 	"context"
-	"database/sql"
 )
 
-type StorageStr struct {
-	Db *sql.DB
-}
-
-type Storage interface {
+type StorageInterface interface {
 	Save(ctx context.Context, key, value string) error
 	Get(ctx context.Context, key string) (string, error)
 }
 
-func Save() {
+func (s StorageStuct) Save(ctx context.Context, key, value string) error {
 
+	return nil
 }
 
-func Get() {
-
+func (s StorageStuct) Get(ctx context.Context, key string) (string, error) {
+	return "", nil
 }
