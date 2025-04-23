@@ -17,7 +17,8 @@ func main() {
 		return
 	}
 
-	err = gw.CreateConnection(cfgData.ConnectionIpServer)
+	//err = gw.CreateConnectionDial(cfgData.ConnectionIpServer)
+	err = gw.CreateConnectionListener(cfgData.ConnectionIpServer)
 	if err != nil {
 		//logger
 		return
