@@ -28,7 +28,7 @@ func main() {
 	shortClient := pbShortener.NewShortenerServiceClient(shortConn)
 	redirectClient := pbRedirect.NewRedirectServiceClient(redirectConn)
 
-	gw.Cgs = gw.ConnectionGrpcStrct{&shortClient, &redirectClient}
+	gw.Cgs = &(gw.ConnectionGrpcStrct{ShortenerServiceClient: &shortClient, RedirectServiceClient: &redirectClient})
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", gw.CreateLinkHandler)
