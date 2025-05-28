@@ -3,7 +3,6 @@ package gateway
 import (
 	"context"
 	"encoding/json"
-	"github.com/tishntahoe/UrlShortener/internal/storage"
 	pbRedirect "github.com/tishntahoe/UrlShortener/proto/redirectpb"
 	pbShortener "github.com/tishntahoe/UrlShortener/proto/shortenerpb"
 	"google.golang.org/grpc"
@@ -35,7 +34,7 @@ func CreateConnectionDial(ipAddress string) (*grpc.ClientConn, error) {
 }
 
 func CreateLinkHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
+	if r.Method != "POST" {
 		//logger
 		return
 	}
@@ -63,8 +62,9 @@ func CreateLinkHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(convResp)
 }
+
 func GetLinkHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
+	if r.Method != "POST" {
 		//logger
 		return
 	}
@@ -73,17 +73,17 @@ func GetLinkHandler(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 
 	key := r.PathValue("id")
-	var st storage.StorageInterface
-	link, err := st.Get(ctx, key)
-	if err != nil {
-		// logger
-	}
 
 	// обращение к GRPC
 	// для получения ссылки ГЕТТЕР
 
 	server := *Cgs.RedirectServiceClient
-	out, err := server.ToRedirect(ctx, &pbRedirect.RedirectShortRequest{ShortLink: link})
+	out, err := server.ToRedirect(ctx, &pbRedirect.RedirectShortRequest{ShortLink: key})
+
+	if err != nil {
+		// logger
+		return
+	}
 
 	http.Redirect(w, r, out.OrigLink, http.StatusTemporaryRedirect)
 	return

@@ -10,17 +10,17 @@ import (
 )
 
 func StorageInit(conf *cfg.Cfg) error {
-	db, err := PostgresLaunch(conf.ConnectionPgString)
-	if err != nil {
-		// logger
-		return err
-	}
+	//db, err := PostgresLaunch(conf.ConnectionPgString)
+	//if err != nil {
+	// logger
+	//	return err
+	//}
 	rds, err := RedisLaunch(conf.ConnectioRedisIP, conf.ConnectioRedisPass)
 	if err != nil {
 		// logger
 		return err
 	}
-	storage.Storage = &storage.StorageStuct{Db: db, RedisConn: rds}
+	storage.Storage = &storage.StorageStuct{Db: nil, RedisConn: rds}
 	return nil
 }
 
