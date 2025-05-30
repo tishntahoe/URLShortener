@@ -49,6 +49,6 @@ make build
 ```
 Пример запроса (через grpcurl)
 ```bash
-grpcurl -d '{"Link": "https://example.com"}' -plaintext <adress> shortener.Shortener/ToRedirect
+grpcurl -d '{"Link": "https://example.com"}' -plaintext <adress> shortener.Shortener/ToShort
 ```
 
