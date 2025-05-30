@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
 	si "github.com/tishntahoe/UrlShortener/cmd/storageInit"
 	gw "github.com/tishntahoe/UrlShortener/internal/gateway"
 	"github.com/tishntahoe/UrlShortener/internal/redirect"
 	"github.com/tishntahoe/UrlShortener/internal/shotener"
 	cfg "github.com/tishntahoe/UrlShortener/pkg/cfg"
+	"github.com/tishntahoe/UrlShortener/pkg/logger"
 	pbRedirect "github.com/tishntahoe/UrlShortener/proto/redirectpb"
 	pbShortener "github.com/tishntahoe/UrlShortener/proto/shortenerpb"
 	"google.golang.org/grpc"
@@ -18,9 +18,7 @@ func main() {
 	cfgData := cfg.CfgLaunch()
 	err := si.StorageInit(cfgData)
 	if err != nil {
-		//logger
-		fmt.Println(err)
-		return
+		logger.ErrorHandler(err, logger.GetWorkDir())
 	}
 
 	go rdrct()
@@ -29,8 +27,7 @@ func main() {
 	shortConn, err := gw.CreateConnectionDial("localhost:50052")    // шортенер cfgData.ConnectionIpServer
 	redirectConn, err := gw.CreateConnectionDial("localhost:50051") // редирект cfgData.ConnectionIpServer
 	if err != nil {
-		//logger
-		return
+		logger.ErrorHandler(err, logger.GetWorkDir())
 	}
 	shortClient := pbShortener.NewShortenerServiceClient(shortConn)
 	redirectClient := pbRedirect.NewRedirectServiceClient(redirectConn)
@@ -46,7 +43,7 @@ func main() {
 func rdrct() {
 	listen, err := net.Listen("tcp", ":50052")
 	if err != nil {
-		// logger
+		logger.ErrorHandler(err, logger.GetWorkDir())
 		return
 	}
 	grpcServer := grpc.NewServer()
@@ -54,7 +51,7 @@ func rdrct() {
 	pbRedirect.RegisterRedirectServiceServer(grpcServer, &redirect.Server{})
 
 	if err := grpcServer.Serve(listen); err != nil {
-		// logger
+		logger.ErrorHandler(err, logger.GetWorkDir())
 		return
 	}
 }
@@ -62,14 +59,14 @@ func rdrct() {
 func shrt() {
 	listen, err := net.Listen("tcp", ":50051")
 	if err != nil {
-		// logger
+		logger.ErrorHandler(err, logger.GetWorkDir())
 		return
 	}
 	grpcServer := grpc.NewServer()
 	pbShortener.RegisterShortenerServiceServer(grpcServer, &shotener.Server{})
 
 	if err := grpcServer.Serve(listen); err != nil {
-		// logger
+		logger.ErrorHandler(err, logger.GetWorkDir())
 		return
 	}
 }

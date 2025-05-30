@@ -3,6 +3,7 @@ package shotener
 import (
 	"context"
 	"github.com/tishntahoe/UrlShortener/internal/storage"
+	"github.com/tishntahoe/UrlShortener/pkg/logger"
 	pb "github.com/tishntahoe/UrlShortener/proto/shortenerpb"
 	"math/rand"
 )
@@ -33,8 +34,7 @@ func (s Server) ToShort(ctx context.Context, request *pb.ShortRequest) (*pb.Shor
 	}
 	settedVal, err := rdsconn.Set(ctx, foundvalue, request.OrigLink, 5).Result()
 	if err != nil {
-		//logger
-		return &pb.ShortResponse{}, err
+		logger.ErrorHandler(err, logger.GetWorkDir())
 	}
 	return &pb.ShortResponse{ShortLink: settedVal}, nil
 }

@@ -3,6 +3,8 @@ package gateway
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"github.com/tishntahoe/UrlShortener/pkg/logger"
 	pbRedirect "github.com/tishntahoe/UrlShortener/proto/redirectpb"
 	pbShortener "github.com/tishntahoe/UrlShortener/proto/shortenerpb"
 	"google.golang.org/grpc"
@@ -35,7 +37,8 @@ func CreateConnectionDial(ipAddress string) (*grpc.ClientConn, error) {
 
 func CreateLinkHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
-		//logger
+		err := errors.New("Неверный метод ")
+		logger.InfoHandler(err, logger.GetWorkDir())
 		return
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
@@ -45,8 +48,7 @@ func CreateLinkHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		//logger
-		return
+		logger.ErrorHandler(err, logger.GetWorkDir())
 	}
 	// обращение к GRPC
 	// для получения ссылки СЕТТЕР
@@ -55,8 +57,7 @@ func CreateLinkHandler(w http.ResponseWriter, r *http.Request) {
 		OrigLink: request.link,
 	})
 	if err != nil {
-		//logger
-		return
+		logger.ErrorHandler(err, logger.GetWorkDir())
 	}
 	convResp := map[string]string{"short_link": resp.ShortLink}
 	w.Header().Set("Content-Type", "application/json")
@@ -65,7 +66,8 @@ func CreateLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetLinkHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
-		//logger
+		err := errors.New("Неверный метод ")
+		logger.InfoHandler(err, logger.GetWorkDir())
 		return
 	}
 
@@ -81,8 +83,7 @@ func GetLinkHandler(w http.ResponseWriter, r *http.Request) {
 	out, err := server.ToRedirect(ctx, &pbRedirect.RedirectShortRequest{ShortLink: key})
 
 	if err != nil {
-		// logger
-		return
+		logger.ErrorHandler(err, logger.GetWorkDir())
 	}
 
 	http.Redirect(w, r, out.OrigLink, http.StatusTemporaryRedirect)
